@@ -30,7 +30,7 @@ public abstract class Personnel extends Unit {
      * @param enemyArmy The enemy personnel
      */
     public void startWar(List<Personnel> enemyArmy){
-        if(getHealth() > 0 && enemyArmy.size() > 0)
+        while(getHealth() > 0 && enemyArmy.size() > 0)
         {
             Random r = new Random();
             this.opponent = enemyArmy.get(r.nextInt(enemyArmy.size()));

@@ -2,7 +2,7 @@ package concurent.student.second;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Peasant extends Unit {
+public class Peasant extends Personnel {
 
     private static final int HARVEST_WAIT_TIME = 100;
     private static final int HARVEST_AMOUNT = 10;
@@ -11,7 +11,7 @@ public class Peasant extends Unit {
     private AtomicBoolean isBuilding = new AtomicBoolean(false);
 
     private Peasant(Base owner) {
-        super(owner, UnitType.PEASANT);
+        super(220,owner,5,6, UnitType.PEASANT);
     }
 
     public static Peasant createPeasant(Base owner){
@@ -99,7 +99,6 @@ public class Peasant extends Unit {
                      System.out.println(e);
                  }
                  this.getOwner().getBuildings().add(Building.createBuilding(buildingType, this.getOwner()));
-           
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.Random;
+import java.util.concurrent.atomic.*;
 
 public class Base {
 
@@ -22,8 +23,8 @@ public class Base {
     private final List<Footman> footmen = Collections.synchronizedList(new LinkedList<>());
     private final List<Building> buildings = Collections.synchronizedList(new LinkedList<>());
     private final List<Personnel> army = Collections.synchronizedList(new LinkedList<>());
-    private Integer woodCutters = 0;
-    private Integer miners = 0;
+    private AtomicInteger woodCutters = new AtomicInteger();
+    private AtomicInteger miners = new AtomicInteger();
     public Base(String name){
         this.name = name;
         for(int idx=0; idx<STARTER_PEASANT_NUMBER;idx++)
@@ -55,22 +56,8 @@ public class Base {
                 if(peasants.size() < PEASANT_NUMBER_GOAL &&  resources.canTrain(UnitType.PEASANT.goldCost, UnitType.PEASANT.woodCost, UnitType.PEASANT.foodCost))
                 {
                     Peasant shittie = createPeasant();
-                    if(miners < 5)
-                    {
-                        synchronized(miners)
-                        {
-                            shittie.startMining();
-                            miners++;
-                        }
-                    }
-                    if(woodCutters < 2)
-                    {
-                        synchronized(woodCutters)
-                        {
-                            shittie.startMining();
-                            woodCutters++;
-                        }
-                    }
+                    miners.incrementAndGet();
+                    woodCutters.incrementAndGet();
                 }
             }
         });
@@ -248,7 +235,10 @@ public class Base {
                 p.startWar(enemy);
             }).start();
         }
-
+        while(!army.isEmpty() && !enemy.isEmpty())
+        {
+            Base.sleepForMsec(1000);
+        }
         // If our army has no personnel, we failed
         if(army.isEmpty()){
             System.out.println(this.name + " has lost the fight");
